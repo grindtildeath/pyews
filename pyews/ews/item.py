@@ -1027,7 +1027,13 @@ class Item(Field):
             for cat in child._children:
                 self.categories.add(cat.text)
         elif tag == 'Attachments':
-            self.attachments.populate_from_node(self.service, child)
+            try:
+                self.attachments.populate_from_node(self.service, child)
+            except Exception as exp:
+                _logger.warning(
+                    'Cannot instanciate attachment'
+                    '%s %s' % (exp.code, exp.message)
+                )
         elif tag in self.boolean_fields_tag or tag.startswith('Is'):
             # boolean
             setattr(self.mapping_dict_tag_obj[tag],
@@ -1043,8 +1049,6 @@ class Item(Field):
 
         for child in rnode:
             tag = unQName(child.tag)
-            # if tag == 'ItemId':
-            #     import pdb; pdb.set_trace()
             if tag in self.mapping_dict_tag_obj:
                 res = self._process_tag(child, tag)
                 if not res:
