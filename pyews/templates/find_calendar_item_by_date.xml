@@ -16,38 +16,15 @@
         MaxEntriesReturned="{{ batch_size }}"
         Offset="{{ offset }}"
         BasePoint="Beginning" />
-    <m:Restriction>
-        {% if start_date and end_date %}
-            <t:And>
-        {% end%}
-
-        {% if start_date %}
-            <t:IsGreaterThanOrEqualTo>
-                <t:FieldURI FieldURI="calendar:Start"/>
-                <t:FieldURIOrConstant>
-                    <t:Constant Value="{{ start_date }}" />
-                </t:FieldURIOrConstant>
-            </t:IsGreaterThanOrEqualTo>
-        {% end %}
-        {% if end_date %}
-            <t:IsLessThanOrEqualTo>
-                <t:FieldURI FieldURI="calendar:End"/>
-                <t:FieldURIOrConstant>
-                    <t:Constant Value="{{ end_date }}" />
-                </t:FieldURIOrConstant>
-           </t:IsLessThanOrEqualTo>
-        {% end %}
-
-        {% if start_date and end_date %}
-            </t:And>
-        {% end%}
-    </m:Restriction>
 
     <m:ParentFolderIds>
         <t:FolderId Id="{{ folder_id }} " />
     </m:ParentFolderIds>
-    {% if odoo_events_only %}
-    <m:QueryString>System.Category:'Odoo'</m:QueryString>
+    {% if odoo_events_only and start_date %}
+    <m:QueryString>System.Category:'Odoo' AND Start:{{ start_date }}</m:QueryString>
+    {% end %}
+    {% if odoo_events_only and end_date %}
+    <m:QueryString>System.Category:'Odoo' AND End:{{ end_date }}</m:QueryString>
     {% end %}
 </m:FindItem>
 {% end %}
