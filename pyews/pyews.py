@@ -217,13 +217,15 @@ class ExchangeService(object):
         return resp
 
     def FindCalendarItemsByBothDate(self, folder, start_date, end_date,
-                                    eprops_xml=[], ids_only=False):
+                                    eprops_xml=[], ids_only=False,
+                                    odoo_events_only=False):
         """
 
         """
-        req = FindCalendarItemsRequestBothDate(self, folder_id=folder.Id,
-                                               start_date=start_date,
-                                               end_date=end_date)
+        req = FindCalendarItemsRequestBothDate(
+            self, folder_id=folder.Id, start_date=start_date,
+            end_date=end_date, odoo_events_only=odoo_events_only
+        )
         ret = []
         resp = req.execute()
         shells = resp.items
@@ -236,20 +238,22 @@ class ExchangeService(object):
             return ret
 
     def FindCalendarItemsByDate(self, folder, start=None, end=None,
-                                eprops_xml=[], ids_only=False):
+                                eprops_xml=[], ids_only=False,
+                                odoo_events_only=False):
         """
 
         """
         req = False
         if start is None and end is None:
             return self.FindCalendarItems(folder, eprops_xml=eprops_xml,
-                                          ids_only=ids_only)
+                                          ids_only=ids_only,
+                                          odoo_events_only=odoo_events_only)
         elif start and end:
-            return self.FindCalendarItemsByBothDate(folder=folder,
-                                                    start_date=start,
-                                                    end_date=end,
-                                                    eprops_xml=eprops_xml,
-                                                    ids_only=ids_only)
+            return self.FindCalendarItemsByBothDate(
+                folder=folder, start_date=start, end_date=end,
+                eprops_xml=eprops_xml, ids_only=ids_only,
+                odoo_events_only=odoo_events_only
+            )
         else:
             # Either start or end is not None
             i = 0
@@ -261,7 +265,8 @@ class ExchangeService(object):
                     offset=i,
                     folder_id=folder.Id,
                     start_date=start,
-                    end_date=end
+                    end_date=end,
+                    odoo_events_only=odoo_events_only
                 )
                 resp = req.execute()
                 shells = resp.items
@@ -281,7 +286,8 @@ class ExchangeService(object):
             else:
                 return ret
 
-    def FindCalendarItems(self, folder, eprops_xml=[], ids_only=False):
+    def FindCalendarItems(self, folder, eprops_xml=[], ids_only=False,
+                          odoo_events_only=False):
         """
 
         """
@@ -292,7 +298,8 @@ class ExchangeService(object):
         ret = []
         while True:
             req = FindCalendarItemsRequest(self, batch_size=self.batch_size(),
-                                           offset=i, folder_id=folder.Id)
+                                           offset=i, folder_id=folder.Id,
+                                           odoo_events_only=odoo_events_only)
             resp = req.execute()
             shells = resp.items
             if shells is not None and len(shells) > 0:

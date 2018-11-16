@@ -18,6 +18,8 @@
       <m:ParentFolderIds>
         <t:FolderId Id="{{ folder_id }} " />
       </m:ParentFolderIds>
+      {% if odoo_events_only %}
       <m:QueryString>System.Category:'Odoo'</m:QueryString>
+      {% end %}
     </m:FindItem>
 {% end %}
